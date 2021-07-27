@@ -34,7 +34,7 @@ def load_credentials():
         print("your credentials.json is malformed make sure to have all keys and values doubly quoted")
 
 
-def initialize_browser(headless=False):
+def initialize_browser(headless=True):
     try:
         options = FirefoxOptions()
         options.headless = headless
