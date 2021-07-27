@@ -34,7 +34,7 @@ def load_credentials():
         print("your credentials.json is malformed make sure to have all keys and values doubly quoted")
 
 
-def initialize_browser(headless=True):
+def initialize_browser(headless=False):
     try:
         options = FirefoxOptions()
         options.headless = headless
@@ -76,6 +76,7 @@ def login(usernameInput, passwordInput, existing_browser=None):
         session_memory = browser.find_element_by_xpath(
             ".//*[@id='rememberForSession']")
         session_memory.click()
+       
 
         Uni_list = browser.find_element_by_xpath(
             ".//*[@id='userIdPSelection_iddwrap']")
