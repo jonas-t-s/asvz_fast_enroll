@@ -34,7 +34,7 @@ def load_credentials():
         print("your credentials.json is malformed make sure to have all keys and values doubly quoted")
 
 
-def initialize_browser(headless=True):
+def initialize_browser(headless=False):
     try:
         options = FirefoxOptions()
         options.headless = headless
@@ -190,7 +190,7 @@ def register(classid):
             logger.debug(f"Successfully registered with place number {val}")
             return
         logger.info(f"tried enrolling but not open yet")
-        sleep(1)
+        sleep(0.5)
     raise Exception("This should never happen")
 
 
