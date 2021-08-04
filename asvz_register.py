@@ -34,7 +34,7 @@ def load_credentials():
         print("your credentials.json is malformed make sure to have all keys and values doubly quoted")
 
 
-def initialize_browser(headless=False):
+def initialize_browser(headless=True):
     try:
         options = FirefoxOptions()
         options.headless = headless
@@ -128,7 +128,7 @@ def login(usernameInput, passwordInput, existing_browser=None):
 
 
 error_msgs = {
-    "Der Kurs ist schon ausgebucht!": "full",
+    "Das Angebot ist schon ausgebucht.": "full",
     "Der Anmeldeschluss liegt in der Vergangenheit - eine Anmeldung ist leider nicht mehr möglich!": "past",
     "Diese Lektion wurde abgesagt - eine Einschreibung ist leider nicht möglich!": "canceled",
     "Der Anmeldebeginn liegt in der Zukunft - eine Anmeldung ist leider noch nicht möglich!": "future"
@@ -167,9 +167,9 @@ def register(classid):
     logger.debug("starting to get register time")
     fr, to = get_enrollment_time(classid)
 
-    # sleep until 2 minutes before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-120)
-    sleeptime = (fr - timedelta(minutes=2)).time()
+    # sleep until 1 minutes before registration opens
+    time_to_sleep = max(0, (fr-now()).total_seconds()-60)
+    sleeptime = (fr - timedelta(minutes=1)).time()
     logger.info(f"sleep for {time_to_sleep} seconds until {sleeptime}, we then start logging in")
     sleep(time_to_sleep)
 
@@ -183,7 +183,12 @@ def register(classid):
     sleep(time_to_sleep)
 
     for i in range(15):
-        err, val = enroll(headers, classid)
+        try:
+            err, val = enroll(headers, classid)
+            print(i)
+        except TypeError:
+            sleep(1)
+            continue
         if err in error_msgs and error_msgs[err] != "future":
             raise Exception(err)
         if err is None:
@@ -193,22 +198,26 @@ def register(classid):
         sleep(0.5)
     raise Exception("This should never happen")
 
+def setuplogger(classid):
+    logging.basicConfig(format=f'[{classid}] %(asctime)s %(message)s',
+                        datefmt='%Y-%m-%d %I:%M:%S %p')
+
+    logger.setLevel(logging.DEBUG)
+    logger.debug('logger set up')
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('classid', help="id of class you want to register for")
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
-
-    logging.basicConfig(format=f'[{args.classid}] %(asctime)s %(message)s',
-                        datefmt='%Y-%m-%d %I:%M:%S %p')
-
-    logging.basicConfig()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.debug('main started')
-
-    register(args.classid)
+    setuplogger(args.classid)
+    while True:
+        try:
+            register(args.classid)
+        except TypeError:
+            logger.exception("An TypeError occured, we try again")
+            continue
+        break
 
 
 if __name__ == "__main__":

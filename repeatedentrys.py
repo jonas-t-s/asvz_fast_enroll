@@ -35,18 +35,17 @@ usage: python repeatedentrys LECTIONID's
 
 def lectionstart(classid):
     oldclassid = classid
-    Path('logs').mkdir(exist_ok=True)
-    logging.basicConfig(format=f'[{classid}] %(asctime)s %(message)s',
-                        datefmt='%Y-%m-%d %I:%M:%S %p')
-    logging.basicConfig()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.debug('main started')
+    asvz_register.setuplogger(classid)
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
-    print(oldclasstime[0].time,asvz_register.get_enrollment_time(classid)[0].time)
+    print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         logger.critical("Test")
-        asvz_register.register(classid)
+        while True:
+            try:
+                asvz_register.register(classid)
+            except:
+                continue
+            break
         classid = int(int(classid) + 1)
     logger.warning("The Enrollmenttime changed, so we assume something changed. Please check and restart the bog.")
 
@@ -66,11 +65,11 @@ def main():
             threads.append(threading.Thread(target=lectionstart, args=(arg,)))
             logger.info("Thread with arg: "+ str(arg) + " started")
         else:
-            logger.info(arg + "is not a valid digit. Proceeding to the next one.")
-    i = 0
+            logger.info(arg + " is not a valid digit. Proceeding to the next one.")
+    i = 1
     for thread in threads:
         thread.start()
-        logger.debug("Thread number "+ str(i) + " of " + str(len(threads)) + " started" )
+        logger.debug("Thread number " + str(i) + " of " + str(len(threads)) + " started" )
         i = i + 1
 
 
