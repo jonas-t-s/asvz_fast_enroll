@@ -38,6 +38,7 @@ def lectionstart(classid):
     asvz_register.setuplogger(classid)
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
     print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
+    # If something changes, we abbort the thread.
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         logger.critical("Test")
         while True:
@@ -52,6 +53,7 @@ def lectionstart(classid):
 
 def main():
     #exec("test.py")
+    # setup logger
     Path('logs').mkdir(exist_ok=True)
     logging.basicConfig(format=f'[MAIN] %(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %I:%M:%S %p')
@@ -60,12 +62,15 @@ def main():
     logger.setLevel(logging.DEBUG)
     logger.debug('main started')
     threads = []
+    #For every lesson we want to attend we create a seperate thread (note that those sleep almost always
     for arg in sys.argv:
+        #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
         if arg.isdigit():
             threads.append(threading.Thread(target=lectionstart, args=(arg,)))
             logger.info("Thread with arg: "+ str(arg) + " started")
         else:
             logger.info(arg + " is not a valid digit. Proceeding to the next one.")
+    #log and start the threads
     i = 1
     for thread in threads:
         thread.start()

@@ -36,13 +36,13 @@ def isfree(classid):
         participantsMax = data['data']['participantsMax']
         participantCount = data['data']['participantCount']
     except:
-        return False
+        return False # This should never happen, but if so we asume we got a timeout and therefore we should try again later
     if participantCount == participantsMax:
         return False
     else:
         return True
 
-
+# Do until we recieve a break signal
 while True:
     if not isfree(sys.argv[1]):
         waittime = random.randint(10,360)
@@ -50,7 +50,7 @@ while True:
         sleep(waittime)
         continue
     try:
-        #requests.post()
+        #requests.post() Do something you want here. I post to IFTTT May be usefull if the automated register fails
         asvz_register.main()
         break
     except:
