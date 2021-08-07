@@ -4,7 +4,7 @@ This is a small python script that enrolls you (a student of ETH) in asvz classe
 
 The code logs in before the start of the enrollment and then just posts the enrollment request. This should be faster than a pure selenium registration.
 
-Please [get in touch](mailto:sleising@student.ethz.ch) if the script is broken or you need help. 
+Please get in touch if the script is broken or you need help. 
 
 ## Getting Started 
 1. Install Selenium [chromedriver](https://chromedriver.chromium.org/getting-started#Setup) or [geckodriver](https://github.com/mozilla/geckodriver/releases) for [Selenium](http://www.seleniumhq.org/)
@@ -19,3 +19,4 @@ The script will retrieve the enrollment time and wait for it to start before try
 ## Acknowledgments
 
 * Inspired by the code of [ChenChen](https://github.com/ChenchenYo/LoginCode)
+* The code in this repository is forked and extended from [uniquefine](https://github.com/uniquefine/asvz_fast_enroll)
