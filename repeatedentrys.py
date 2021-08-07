@@ -55,8 +55,8 @@ def main():
     Path('logs').mkdir(exist_ok=True)
     logging.basicConfig(format=f'[MAIN] %(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %I:%M:%S %p')
-    logging.basicConfig()
-    logger = logging.getLogger(__name__)
+    #logging.basicConfig()
+    #logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logger.debug('main started')
     threads = []

@@ -183,12 +183,8 @@ def register(classid):
     sleep(time_to_sleep)
 
     for i in range(15):
-        try:
-            err, val = enroll(headers, classid)
-            print(i)
-        except TypeError:
-            sleep(1)
-            continue
+        err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
+        print(i)
         if err in error_msgs and error_msgs[err] != "future":
             raise Exception(err)
         if err is None:
@@ -211,6 +207,7 @@ def main():
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
     setuplogger(args.classid)
+    #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
     while True:
         try:
             register(args.classid)
