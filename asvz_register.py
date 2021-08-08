@@ -197,7 +197,7 @@ def register(classid):
 def setuplogger(classid):
     logging.basicConfig(format=f'[{classid}] %(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %I:%M:%S %p')
-
+    logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logger.debug('logger set up')
 

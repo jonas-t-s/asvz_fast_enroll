@@ -55,7 +55,7 @@ def main():
     #exec("test.py")
     # setup logger
     Path('logs').mkdir(exist_ok=True)
-    logging.basicConfig(format=f'[MAIN] %(asctime)s %(message)s',
+    logging.basicConfig(format=f'[%(levelname)s] %(asctime)s [%(threadName)s]: %(message)s',
                         datefmt='%Y-%m-%d %I:%M:%S %p')
     #logging.basicConfig()
     #logger = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ def main():
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
         if arg.isdigit():
-            threads.append(threading.Thread(target=lectionstart, args=(arg,)))
+            threads.append(threading.Thread(name=arg, target=lectionstart, args=(arg,)))
             logger.info("Thread with arg: "+ str(arg) + " started")
         else:
             logger.info(arg + " is not a valid digit. Proceeding to the next one.")
