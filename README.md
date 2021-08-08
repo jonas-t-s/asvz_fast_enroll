@@ -6,7 +6,7 @@ The code logs in before the start of the enrollment and then just posts the enro
 
 Please get in touch if the script is broken or you need help. 
 
-## Getting Started 
+## Getting Started (log in once)
 1. Install Selenium [chromedriver](https://chromedriver.chromium.org/getting-started#Setup) or [geckodriver](https://github.com/mozilla/geckodriver/releases) for [Selenium](http://www.seleniumhq.org/)
 2. Install python requirements `pip -r install requirements.txt`
 3. Save your netz username and password in a file `credentials.json` in the same folder ```{"username":"your_username", "password":"your_password"}```. Your credentials are only used to login with switch.
@@ -16,6 +16,9 @@ Please get in touch if the script is broken or you need help.
 
 The script will retrieve the enrollment time and wait for it to start before trying the login. The script must be running to enroll so keep it on a server or some other machine that is online until the enrollment starts.
 
+## I realised to late, that I want a class and now it is full:
+It is easy to say, that you should have done it already with the upper script. But however if you're lucky there is somebody who does unregister and you may get this place. 
+You just use the script: `python3 waitforempty.py <lesson_id>` and then you just hope you get lucky. If there is a free place you will automatically get enrolled. 
 ## Acknowledgments
 
 * Inspired by the code of [ChenChen](https://github.com/ChenchenYo/LoginCode)
