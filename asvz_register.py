@@ -168,8 +168,8 @@ def register(classid):
     fr, to = get_enrollment_time(classid)
 
     # sleep until 1 minutes before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-60)
-    sleeptime = (fr - timedelta(minutes=1))
+    time_to_sleep = max(0, (fr-now()).total_seconds()-90)
+    sleeptime = (fr - timedelta(minutes=1,seconds=30))
     logger.info(f"sleep for {time_to_sleep} seconds until {sleeptime}, we then start logging in")
     sleep(time_to_sleep)
 
