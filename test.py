@@ -19,13 +19,21 @@ class RegisterTests(unittest.TestCase):
         """
         req = requests.get("https://asvz.ch/asvz_api/event_search?_format=json&limit=60")
         lessons = json.loads(req.content.decode())['results']
-        no_free_places = [l for l in lessons if l['places_free'] == 0]
+        # no_free_places = [l for l in lessons if l['places_free'] == 0]
+        no_free_places = []
+        for l in lessons:
+            try:
+                if l['places_free'] == 0:
+                    no_free_places.append(l)
+            except KeyError:
+                continue  # there are lessons, where the places_free does not exist. We then just skip those lessons.
+                # Can't be that bad
         assert len(no_free_places) > 0
         usernameStr, passwordStr = load_credentials()
         lesson_id = no_free_places[0]['url'].split("/")[-1]
         headers = login(usernameStr, passwordStr)
         assert 'Authorization' in headers
-        err, val = enroll(headers, lesson_id) # Anmeldefrist vorbei -> 422
+        err, val = enroll(headers, lesson_id)  # Anmeldefrist vorbei -> 422
         if err:
             assert err in error_msgs
 
