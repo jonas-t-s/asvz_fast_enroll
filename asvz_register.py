@@ -184,7 +184,6 @@ def register(classid):
 
     for i in range(15):
         err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
-        print(i)
         if err in error_msgs and error_msgs[err] != "future":
             raise Exception(err)
         if err is None:

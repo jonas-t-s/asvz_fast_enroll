@@ -40,7 +40,6 @@ def lectionstart(classid):
     print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
     # If something changes, we abbort the thread.
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
-        logger.critical("Test")
         while True:
             try:
                 asvz_register.register(classid)
