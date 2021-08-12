@@ -39,10 +39,11 @@ def lectionstart(classid):
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
     print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
     # If something changes, we abbort the thread.
+    browser = asvz_register.initialize_browser(headless=True)
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         while True:
             try:
-                asvz_register.register(classid)
+                asvz_register.register(classid, browser)
             except:
                 continue
             break

@@ -46,7 +46,7 @@ def initialize_browser(headless=True):
     return browser
 
 
-def login(usernameInput, passwordInput, existing_browser=None):
+def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
 
     if existing_browser is None:
         browser = initialize_browser()
@@ -60,10 +60,18 @@ def login(usernameInput, passwordInput, existing_browser=None):
             return WebDriverWait(browser, timeout).until(
                 EC.presence_of_element_located((By.XPATH, xpath)))
 
-        #lesson_url = "https://auth.asvz.ch/account/login"
-        lesson_url = "https://schalter.asvz.ch/tn/lessons/119157"
+        if lessonid is None:
+            # lesson_url = "https://auth.asvz.ch/account/login"
+            # lesson_url = "https://schalter.asvz.ch/tn/lessons/119157"
+            lesson_url = "https://schalter.asvz.ch/tn/lessons/218642"
+        else:
+            lesson_url = "https://schalter.asvz.ch/tn/lessons/" + str(lessonid)
+
         browser.get(lesson_url)
 
+        if 'Authorization' in browser.requests[-1].headers:
+            # logged in
+            return browser.requests[-1].headers
         redirect_button = wait_for_xpath(
             "//button[contains(@title,\"Login\")]")
         #redirect_button = browser.find_element_by_xpath("//button[contains(@title,\"Login\")]")
@@ -161,7 +169,7 @@ def now():
     return now.astimezone(local_tz)
 
 
-def register(classid):
+def register(classid, existingBrowser=None):
     username, password = load_credentials()
     # get enrollment start time
     logger.debug("starting to get register time")
@@ -175,8 +183,8 @@ def register(classid):
 
     # login
     logger.info("logging in")
-    headers = login(username, password)
-
+    headers = login(username, password, existingBrowser, lessonid=classid)
+    err1, val1 = enroll(headers, classid) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens
     time_to_sleep = max(0, (fr-now()).total_seconds()-3)
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
@@ -190,7 +198,7 @@ def register(classid):
             logger.debug(f"Successfully registered with place number {val}")
             return
         logger.info(f"tried enrolling but not open yet")
-        sleep(0.5)
+        sleep(0.98)
     raise Exception("This should never happen")
 
 def setuplogger(classid):
@@ -206,15 +214,16 @@ def main():
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
     setuplogger(args.classid)
+    browser = initialize_browser(headless=True)
     #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
     while True:
         try:
-            register(args.classid)
+            register(args.classid, browser)
         except TypeError:
             logger.exception("An TypeError occured, we try again")
             continue
         break
-
+    browser.close()
 
 if __name__ == "__main__":
     main()
