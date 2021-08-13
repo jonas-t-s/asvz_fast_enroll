@@ -36,14 +36,16 @@ def isfree(classid):
         participantsMax = data['data']['participantsMax']
         participantCount = data['data']['participantCount']
     except:
-        return False # This should never happen, but if so we asume we got a timeout and therefore we should try again later
+        return False # This should never happen, but if so we asume we got a timeout and therefore we should try
+        # again later
     if participantCount == participantsMax:
         return False
     else:
         return True
-
+t = asvz_register.get_enrollment_time(sys.argv[1])[1]
+A = float(input(f"Please enter the amount of hours, before the end end of enrollement {t} when we should give up"))
 # Do until we recieve a break signal
-while True:
+while True and (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_time(sys.argv[1])[1]).total_seconds()<0 + abs(A)*60*60:
     if not isfree(sys.argv[1]):
         waittime = random.randint(10,360)
         print("sleeping for " + str(waittime) + " seconds")
@@ -55,3 +57,4 @@ while True:
         break
     except:
         continue
+print("In case you didn't recieve a placenumber you were unlucky and it was not possible to get you enrolled.")

@@ -26,6 +26,7 @@ from pathlib import Path
 import requests
 
 logger = logging.getLogger(__name__)
+threads = []
 
 '''
 This File lets you enroll repeatedly on multiple things.
@@ -61,7 +62,6 @@ def main():
     #logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logger.debug('main started')
-    threads = []
     #For every lesson we want to attend we create a seperate thread (note that those sleep almost always
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
@@ -79,4 +79,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.critical("KeyboardInterupt recieved. Shutting down")
