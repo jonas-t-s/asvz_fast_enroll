@@ -33,6 +33,7 @@ This File lets you enroll repeatedly on multiple things.
 usage: python repeatedentrys LECTIONID's
 '''
 
+browser = None
 
 def lectionstart(classid):
     oldclassid = classid
@@ -40,7 +41,7 @@ def lectionstart(classid):
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
     print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
     # If something changes, we abbort the thread.
-    browser = asvz_register.initialize_browser(headless=True)
+    # browser = asvz_register.initialize_browser(headless=True)
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         while True:
             try:
@@ -71,6 +72,7 @@ def main():
         else:
             logger.info(arg + " is not a valid digit. Proceeding to the next one.")
     #log and start the threads
+    browser = asvz_register.initialize_browser(headless=True)
     i = 1
     for thread in threads:
         thread.start()
