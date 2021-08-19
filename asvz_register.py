@@ -222,7 +222,7 @@ def main():
         try:
             register(args.classid, browser)
         except TypeError:
-            logger.exception("An TypeError occured, we try again")
+            logger.exception("A TypeError occurred, we try again")
             continue
         break
     browser.close()
@@ -231,4 +231,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        logger.critical("KeyboardInterupt recieved. Shutting down")
+        logger.critical("KeyboardInterupt received. Shutting down")
