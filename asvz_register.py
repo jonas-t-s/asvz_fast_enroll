@@ -68,6 +68,8 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
             lesson_url = "https://schalter.asvz.ch/tn/lessons/" + str(lessonid)
 
         browser.get(lesson_url)
+        if not existing_browser is None:
+            browser.refresh() # It could be possible, that the cache and the authentification is not up to date here. So we reload. (This may only happen, if the browser is created before.)
 
         if 'Authorization' in browser.requests[-1].headers:
             # logged in
