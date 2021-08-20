@@ -1,6 +1,6 @@
 # ASVZ fast enroll 
 
-This is a small python script that enrolls you (a student of ETH) in asvz classes that requre registration (all of them as of summer 2020).
+This is a small python script that enrolls you (a student of ETH) in asvz classes that require registration (all of them as of summer 2020).
 
 The code logs in before the start of the enrollment and then just posts the enrollment request. This should be faster than a pure selenium registration.
 
