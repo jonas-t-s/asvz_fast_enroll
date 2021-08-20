@@ -34,6 +34,7 @@ usage: python repeatedentrys LECTIONID's
 '''
 
 browser = None
+nextactivetimes = []
 
 def lectionstart(classid):
     oldclassid = classid
@@ -43,12 +44,17 @@ def lectionstart(classid):
     # If something changes, we abbort the thread.
     # browser = asvz_register.initialize_browser(headless=True)
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
-        while True:
-            try:
-                asvz_register.register(classid, browser)
-            except:
-                continue
-            break
+        if asvz_register.get_enrollment_time(classid)[0] in nextactivetimes:
+            asvz_register.register(classid, None)
+        else:
+            nextactivetimes.append(asvz_register.get_enrollment_time(classid)[0])
+            while True:
+                try:
+                    asvz_register.register(classid, browser)
+                except:
+                    continue
+                break
+            nextactivetimes.remove(asvz_register.get_enrollment_time(classid)[0])
         classid = int(int(classid) + 1)
     logger.warning("The Enrollmenttime changed, so we assume something changed. Please check and restart the bog.")
 
