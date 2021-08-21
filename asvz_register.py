@@ -156,13 +156,16 @@ def enroll(headers, lesson_id):
         assert message in error_msgs
         return message, None
 
-
-def get_enrollment_time(lesson_id):
+def get_data_about_lesson(lesson_id):
     req = requests.get(
         f"https://schalter.asvz.ch/tn-api/api/Lessons/{lesson_id}")
     j = json.loads(req.content.decode())
+    return j['data']
+
+def get_enrollment_time(lesson_id):
+    j = get_data_about_lesson(lesson_id)
     def parse_time(s): return datetime.strptime(s, "%Y-%m-%dT%H:%M:%S%z")
-    return parse_time(j['data']['enrollmentFrom']), parse_time(j['data']['enrollmentUntil'])
+    return parse_time(j['enrollmentFrom']), parse_time(j['enrollmentUntil'])
 
 
 def now():
