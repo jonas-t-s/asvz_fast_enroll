@@ -53,7 +53,7 @@ while (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_t
         continue
     try:
         #requests.post() Do something you want here. I post to IFTTT May be usefull if the automated register fails
-        asvz_register.main()
+        asvz_register.register(sys.argv[1], browser)
         break
     except:
         continue
