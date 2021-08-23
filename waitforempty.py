@@ -42,19 +42,30 @@ def isfree(classid):
         return False
     else:
         return True
-t = asvz_register.get_enrollment_time(sys.argv[1])[1]
-A = float(input(f"Please enter the amount of hours, before the end end of enrollement {t} when we should give up"))
-# Do until we recieve a break signal
-while (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_time(sys.argv[1])[1]).total_seconds()<0 + abs(A)*60*60:
-    if not isfree(sys.argv[1]):
-        waittime = random.randint(10,360)
-        print("sleeping for " + str(waittime) + " seconds")
-        sleep(waittime)
-        continue
+
+
+def main():
+    t = asvz_register.get_enrollment_time(sys.argv[1])[1]
+    A = float(input(f"Please enter the amount of hours, before the end end of enrollement {t} when we should give up"))
+    # Do until we recieve a break signal
+    while (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_time(sys.argv[1])[
+        1]).total_seconds() < 0 + abs(A) * 60 * 60:
+        if not isfree(sys.argv[1]):
+            waittime = random.randint(10, 360)
+            print("sleeping for " + str(waittime) + " seconds")
+            sleep(waittime)
+            continue
+        try:
+            # requests.post() Do something you want here. I post to IFTTT May be usefull if the automated register fails
+            asvz_register.register(sys.argv[1], browser)
+            break
+        except:
+            continue
+    print("In case you didn't recieve a placenumber you were unlucky and it was not possible to get you enrolled.")
+
+if __name__ == "__main__":
     try:
-        #requests.post() Do something you want here. I post to IFTTT May be usefull if the automated register fails
-        asvz_register.register(sys.argv[1], browser)
-        break
-    except:
-        continue
-print("In case you didn't recieve a placenumber you were unlucky and it was not possible to get you enrolled.")
+        main()
+    except KeyboardInterrupt:
+        logger.critical("KeyboardInterupt received. Shutting down")
+
