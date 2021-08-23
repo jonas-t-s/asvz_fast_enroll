@@ -27,7 +27,6 @@ def main():
     logger.debug('main started')
     browser = asvz_register.initialize_browser()
     while True:
-        print("Enter your Options:")
         print("1. Add a ONE-TIME-enrollement-event")
         print("2. Add a REPEATED-enrollement-event")
         print("3. OOOOPs, I forgot to enroll")
