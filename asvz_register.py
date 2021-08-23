@@ -85,6 +85,7 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
 
         session_memory = browser.find_element_by_xpath(
             ".//*[@id='rememberForSession']")
+        
         session_memory.click()
        
 
