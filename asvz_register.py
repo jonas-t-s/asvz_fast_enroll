@@ -1,4 +1,5 @@
 import json
+import threading
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -47,6 +48,7 @@ def initialize_browser(headless=True):
 
 
 def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
+
 
     if existing_browser is None:
         browser = initialize_browser()
@@ -134,7 +136,6 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
     finally:
         if existing_browser is None:
             browser.close()
-
     return browser.requests[-1].headers
 
 
@@ -175,7 +176,7 @@ def now():
     return now.astimezone(local_tz)
 
 
-def register(classid, existingBrowser=None):
+def register(classid, existingBrowser=None, lock=threading.Lock):
     username, password = load_credentials()
     # get enrollment start time
     logger.debug("starting to get register time")
@@ -189,7 +190,9 @@ def register(classid, existingBrowser=None):
 
     # login
     logger.info("logging in")
+    lock.acquire()
     headers = login(username, password, existingBrowser, lessonid=classid)
+    lock.release()
     err1, val1 = enroll(headers, classid) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens
     time_to_sleep = max(0, (fr-now()).total_seconds()-3)
