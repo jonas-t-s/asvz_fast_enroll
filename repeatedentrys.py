@@ -80,7 +80,11 @@ def main():
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
         if arg.isdigit():
-            threads.append(threading.Thread(name=arg, target=lectionstart, args=(arg,)))
+            j = asvz_register.get_data_about_lesson(arg)
+            sportname=j["sportName"]
+            when = datetime.strptime(j["starts"], "%Y-%m-%dT%H:%M:%S%z")
+            name = sportname + "-" + when.weekday() + "(orig:" + arg +")"
+            threads.append(threading.Thread(name=name, target=lectionstart, args=(arg,)))
             logger.info("Thread with arg: "+ str(arg) + " started")
         else:
             logger.info(arg + " is not a valid digit. Proceeding to the next one.")
