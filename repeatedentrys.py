@@ -75,7 +75,7 @@ def main():
     #logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logger.debug('main started')
-    threads.append(threading.Thread(name="Browserrestart", target=browserrestart))
+    # threads.append(threading.Thread(name="Browserrestart", target=browserrestart))
     #For every lesson we want to attend we create a seperate thread (note that those sleep almost always
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
