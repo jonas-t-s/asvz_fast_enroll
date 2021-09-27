@@ -55,7 +55,7 @@ def lectionstart(classid):
 
 def browserrestart():
     while True:
-        if datetime.datetime.now().hour is 3 and datetime.datetime.now().min == datetime.datetime.now().second == 0 and datetime.datetime.now().weekday() == 1:
+        if datetime.now().hour is 3 and datetime.now().min == datetime.now().second == 0 and datetime.now().weekday() == 1:
             lock.acquire()
             browser.close()
             browser = asvz_register.initialize_browser()
