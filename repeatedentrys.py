@@ -40,7 +40,7 @@ def lectionstart(classid):
     oldclassid = classid
     asvz_register.setuplogger(classid)
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
-    print(oldclasstime[0].time, asvz_register.get_enrollment_time(classid)[0].time)
+    print(oldclasstime[0].time(), asvz_register.get_enrollment_time(classid)[0].time())
     # If something changes, we abbort the thread.
     # browser = asvz_register.initialize_browser(headless=True)
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
@@ -106,3 +106,5 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         logger.critical("KeyboardInterupt recieved. Shutting down")
+        if browser is not None:
+            browser.close()
