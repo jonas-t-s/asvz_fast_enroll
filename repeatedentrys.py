@@ -83,7 +83,8 @@ def main():
             j = asvz_register.get_data_about_lesson(arg)
             sportname=j["sportName"]
             when = datetime.strptime(j["starts"], "%Y-%m-%dT%H:%M:%S%z")
-            name = sportname + "-" + when.weekday() + "(orig:" + arg +")"
+            day =["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            name = sportname + "-" + day[when.weekday()] + "(orig:" + arg +")"
             threads.append(threading.Thread(name=name, target=lectionstart, args=(arg,)))
             logger.info("Thread with arg: "+ str(arg) + " started")
         else:
