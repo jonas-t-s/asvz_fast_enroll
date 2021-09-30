@@ -210,7 +210,7 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
             logger.debug(f"Successfully registered with place number {val}")
             return
         logger.info(f"tried enrolling but not open yet")
-        sleep(0.98)
+        sleep(0.89)
     raise Exception("This should never happen")
 
 def setuplogger(classid):
