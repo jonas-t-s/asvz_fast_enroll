@@ -201,7 +201,7 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     time_to_sleep = max(0, (fr-now()).total_seconds()-3)
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
     sleep(time_to_sleep)
-
+    sleeptime_in_loop = 1
     for i in range(15):
         err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
         if err in error_msgs and error_msgs[err] != "future":
@@ -210,7 +210,9 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
             logger.debug(f"Successfully registered with place number {val}")
             return
         logger.info(f"tried enrolling but not open yet")
-        sleep(0.89)
+        sleep(sleeptime_in_loop)
+        if i >= 2:
+            sleeptime_in_loop = sleeptime_in_loop/1.5
     raise Exception("This should never happen")
 
 def setuplogger(classid):
