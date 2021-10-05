@@ -33,7 +33,7 @@ lock: Lock = threading.Lock()
 This File lets you enroll repeatedly on multiple things.
 usage: python repeatedentrys LECTIONID's
 '''
-
+global browser
 browser = None
 
 def lectionstart(classid):
@@ -55,7 +55,8 @@ def lectionstart(classid):
 
 def browserrestart():
     while True:
-        if datetime.now().hour is 3 and datetime.now().min == datetime.now().second == 0 and datetime.now().weekday() == 1:
+        global browser
+        if datetime.now().hour == 3 and datetime.now().min == datetime.now().second == 0 and datetime.now().weekday() == 1:
             logger.debug("getting lock")
             lock.acquire()
             logger.debug("closing browser")
