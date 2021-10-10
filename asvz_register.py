@@ -190,11 +190,11 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
 
 
     logger.info("getting lock")
-    lock.acquire()
+    # lock.acquire()
     # login
     logger.info("logging in")
     headers = login(username, password, existingBrowser, lessonid=classid)
-    lock.release()
+    #lock.release()
     logger.debug("releasing lock")
     err1, val1 = enroll(headers, classid) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens

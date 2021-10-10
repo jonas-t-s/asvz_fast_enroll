@@ -46,7 +46,7 @@ def lectionstart(classid):
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         while True:
             try:
-                asvz_register.register(classid, browser, lock)
+                asvz_register.register(classid, browser)
             except:
                 continue
             break
@@ -58,13 +58,13 @@ def browserrestart():
         global browser
         if datetime.now().hour == 3 and datetime.now().min == datetime.now().second == 0 and datetime.now().weekday() == 1:
             logger.debug("getting lock")
-            lock.acquire()
+            #lock.acquire()
             logger.debug("closing browser")
             browser.close()
             logger.debug("getting new browser")
             browser = asvz_register.initialize_browser()
             logger.debug("releasing lock")
-            lock.release()
+            #lock.release()
         sleep(1)
 
 
