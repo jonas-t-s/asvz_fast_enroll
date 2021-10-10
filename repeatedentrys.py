@@ -28,7 +28,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 threads = []
-lock: Lock = threading.Lock()
+#lock: Lock = threading.Lock()
 '''
 This File lets you enroll repeatedly on multiple things.
 usage: python repeatedentrys LECTIONID's
