@@ -46,12 +46,12 @@ def lectionstart(classid):
     while oldclasstime[0].time() == asvz_register.get_enrollment_time(classid)[0].time() and oldclasstime[0].weekday() == asvz_register.get_enrollment_time(classid)[0].weekday():
         while True:
             try:
-                asvz_register.register(classid, browser)
+                asvz_register.register(classid)
             except:
                 continue
             break
         classid = int(int(classid) + 1)
-    logger.warning("The Enrollmenttime changed, so we assume something changed. Please check and restart the bog.")
+    logger.warning("The Enrollmenttime changed, so we assume something changed. Please check and restart the bot.")
 
 def browserrestart():
     while True:
@@ -96,10 +96,10 @@ def main():
             logger.info(arg + " is not a valid digit. Proceeding to the next one.")
     #log and start the threads
     global browser
-    browser = asvz_register.initialize_browser(headless=True)
+    #browser = asvz_register.initialize_browser(headless=True)
     i = 1
-    browserrestarter= threading.Thread(name="browserrestarter", target=browserrestart)
-    threads.append(browserrestarter)
+    #browserrestarter= threading.Thread(name="browserrestarter", target=browserrestart)
+    #threads.append(browserrestarter)
     for thread in threads:
         thread.start()
         logger.debug("Thread number " + str(i) + " of " + str(len(threads)) + " started" )

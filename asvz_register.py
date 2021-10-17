@@ -183,8 +183,8 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     fr, to = get_enrollment_time(classid)
 
     # sleep until 1 minutes before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-90)
-    sleeptime = (fr - timedelta(minutes=1,seconds=30))
+    time_to_sleep = max(0, (fr-now()).total_seconds()-100)
+    sleeptime = (fr - timedelta(minutes=1,seconds=40))
     logger.info(f"sleep for {time_to_sleep} seconds until {sleeptime}, we then start logging in")
     sleep(time_to_sleep)
 
@@ -192,8 +192,14 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     logger.info("getting lock")
     # lock.acquire()
     # login
-    logger.info("logging in")
-    headers = login(username, password, existingBrowser, lessonid=classid)
+    while True:
+        try:
+            logger.info("logging in")
+            headers = login(username, password, lessonid=classid)
+            break
+        except:
+            continue
+
     #lock.release()
     logger.debug("releasing lock")
     err1, val1 = enroll(headers, classid) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
@@ -202,8 +208,16 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
     sleep(time_to_sleep)
     sleeptime_in_loop = 1
+    typerror = 0
     for i in range(15):
-        err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
+        try:
+            err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
+        except:
+            typerror = typerror +1
+            if typerror == 4:
+                logger.critical("4th Typeerror, we abort now")
+            logger.critical("Something failed, trying again")
+            continue
         if err in error_msgs and error_msgs[err] != "future":
             raise Exception(err)
         if err is None:
@@ -228,16 +242,16 @@ def main():
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
     setuplogger(args.classid)
-    browser = initialize_browser(headless=True)
+    #browser = initialize_browser(headless=True)
     #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
     while True:
         try:
-            register(args.classid, browser)
+            register(args.classid)
         except TypeError:
             logger.exception("A TypeError occurred, we try again")
             continue
         break
-    browser.close()
+    #browser.close()
 
 if __name__ == "__main__":
     try:
