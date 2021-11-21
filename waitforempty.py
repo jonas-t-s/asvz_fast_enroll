@@ -25,7 +25,7 @@ from pathlib import Path
 import requests
 
 browser = asvz_register.initialize_browser(headless=True)
-
+logger = asvz_register.logger
 
 def isfree(classid):
     try:
@@ -46,6 +46,15 @@ def isfree(classid):
 
 def main():
     t = asvz_register.get_enrollment_time(sys.argv[1])[1]
+    data = asvz_register.get_data_about_lesson(sys.argv[1])
+    print("Some information about what you're going to hope for:")
+    print("Sporttime: ", data["sportName"])
+    print("Starttime: ", data["starts"])
+    print("Endtime: ", data["ends"])
+    print("instructor(s): ", data["instructors"])
+    print("Where: ", data["facilities"], data["rooms"])
+    print("number: ", data["number"])
+    print("Title", data["title"])
     A = float(input(f"Please enter the amount of hours, before the end end of enrollement {t} when we should give up"))
     # Do until we recieve a break signal
     while (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_time(sys.argv[1])[
