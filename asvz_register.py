@@ -147,12 +147,17 @@ error_msgs = {
 }
 
 
-def enroll(headers, lesson_id):
+def enroll(headers, lesson_id, when):
+    if when.timestamp() < datetime.now().timestamp():
+        t = datetime.now()
+    else:
+        t = when
     res = requests.post(
-        f'https://schalter.asvz.ch/tn-api/api/Lessons/{lesson_id}/enroll', headers=headers)
+        f'https://schalter.asvz.ch/tn-api/api/Lessons/{lesson_id}/Enrollment??t={t.timestamp()*1000}', headers=headers)
 
     if res.status_code == 201:
         return None, json.loads(res.content.decode())['data']['placeNumber']
+    print(t.timestamp())
     if res.status_code == 422:
         message = json.loads(res.content.decode())['errors'][0]['message']
         assert message in error_msgs
@@ -164,8 +169,11 @@ def get_data_about_lesson(lesson_id):
     j = json.loads(req.content.decode())
     return j['data']
 
-def get_enrollment_time(lesson_id):
-    j = get_data_about_lesson(lesson_id)
+def get_enrollment_time(lesson_id, json=None):
+    if json is None:
+        j = get_data_about_lesson(lesson_id)
+    else:
+        j= json
     def parse_time(s): return datetime.strptime(s, "%Y-%m-%dT%H:%M:%S%z")
     return parse_time(j['enrollmentFrom']), parse_time(j['enrollmentUntil'])
 
@@ -202,20 +210,21 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
 
     #lock.release()
     logger.debug("releasing lock")
-    err1, val1 = enroll(headers, classid) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
+    err1, val1 = enroll(headers, classid,fr) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-3)
+    time_to_sleep = max(0, (fr-now()).total_seconds()-2)
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
     sleep(time_to_sleep)
     sleeptime_in_loop = 1
     typerror = 0
     for i in range(15):
         try:
-            err, val = enroll(headers, classid) # We expect a typeerror here. If this happens, we break immediately
-        except:
+            err, val = enroll(headers, classid, fr) # We expect a typeerror here. If this happens, we break immediately
+        except TypeError as e:
             typerror = typerror +1
             if typerror == 4:
                 logger.critical("4th Typeerror, we abort now")
+                raise e
             logger.critical("Something failed, trying again")
             continue
         if err in error_msgs and error_msgs[err] != "future":
