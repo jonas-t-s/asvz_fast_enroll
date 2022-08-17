@@ -22,7 +22,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-
+ASVZ_DATETIMEFORMAT= "%Y-%m-%dT%H:%M:%S%z"
 def load_credentials():
     try:
         with open("credentials.json", 'r') as fp:
@@ -174,7 +174,7 @@ def get_enrollment_time(lesson_id, json=None):
         j = get_data_about_lesson(lesson_id)
     else:
         j= json
-    def parse_time(s): return datetime.strptime(s, "%Y-%m-%dT%H:%M:%S%z")
+    def parse_time(s): return datetime.strptime(s, ASVZ_DATETIMEFORMAT)
     return parse_time(j['enrollmentFrom']), parse_time(j['enrollmentUntil'])
 
 
@@ -245,15 +245,24 @@ def setuplogger(classid):
     logger.setLevel(logging.DEBUG)
     logger.debug('logger set up')
 
-
+def sortclassids(classids):
+    list=[]
+    for classid in classids:
+        list.append((get_enrollment_time(classid), classid))
+    sortedlist= sorted(list, key=lambda t: t[0][0]) #https://stackoverflow.com/questions/57873530/how-to-sort-a-list-by-datetime-in-python
+    result= []
+    for elem in sortedlist:
+        result.append(elem[1])
+    return result
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('classid', help="id of class you want to register for", type=int, nargs='+')
+    parser.add_argument('classid', help="id of class(es) you want to register for", type=int, nargs='+')
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
     setuplogger(args.classid)
-
-    for classid in args.classid:
+    sortedlist = sortclassids(args.classid)
+    print(sortedlist)
+    for classid in sortedlist:
         logger.info(f"We're now on the following classid: {classid}")
         logger.info("The info about it is:")
         j = get_data_about_lesson(classid)
