@@ -245,22 +245,35 @@ def setuplogger(classid):
     logger.setLevel(logging.DEBUG)
     logger.debug('logger set up')
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('classid', help="id of class you want to register for")
+    parser.add_argument('classid', help="id of class you want to register for", type=int, nargs='+')
     args = parser.parse_args()
     Path('logs').mkdir(exist_ok=True)
     setuplogger(args.classid)
-    #browser = initialize_browser(headless=True)
-    #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
-    while True:
-        try:
-            register(args.classid)
-        except TypeError:
-            logger.exception("A TypeError occurred, we try again")
-            continue
-        break
-    #browser.close()
+
+    for classid in args.classid:
+        logger.info(f"We're now on the following classid: {classid}")
+        logger.info("The info about it is:")
+        j = get_data_about_lesson(classid)
+        sportname=j["sportName"]
+        start=j["starts"]
+        end=j["ends"]
+        instructors=j["instructors"]
+        logger.info(f"Sport: {sportname}")
+        logger.info(f"start -> end: {start} -> {end} ")
+        logger.info(f"instructors: {instructors}") # That may seem ugly, but it works
+        #browser = initialize_browser(headless=True)
+        #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
+        while True:
+            try:
+                register(args.classid)
+            except TypeError:
+                logger.exception("A TypeError occurred, we try again")
+                continue
+            break
+        #browser.close()
 
 if __name__ == "__main__":
     try:
