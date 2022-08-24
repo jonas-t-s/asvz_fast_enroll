@@ -277,7 +277,7 @@ def main():
         #it is planned, that this loop only runs once, but in my testing I've seen, that it is possible, that the user get unauthorized and then we restart. (and lose approx 20 seconds)
         while True:
             try:
-                register(args.classid)
+                register(classid)
             except TypeError:
                 logger.exception("A TypeError occurred, we try again")
                 continue
