@@ -85,30 +85,30 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
             "//button[@value=\"SwitchAai\"]")
         AAI_button.click()
 
-        session_memory = browser.find_element_by_xpath(
+        session_memory = browser.find_element("xpath",
             ".//*[@id='rememberForSession']")
         
         session_memory.click()
        
 
-        Uni_list = browser.find_element_by_xpath(
+        Uni_list = browser.find_element("xpath",
             ".//*[@id='userIdPSelection_iddwrap']")
         Uni_list.click()
 
         # hover ETH option and click it
         ActionChains(browser).move_to_element(Uni_list).move_to_element(
-            browser.find_element_by_xpath(".//*[contains(@title, 'ETH')]")).click().perform()
+            browser.find_element("xpath", ".//*[contains(@title, 'ETH')]")).click().perform()
 
         username = WebDriverWait(browser, 15).until(
             EC.presence_of_element_located((By.ID, "username")))
 
         username.send_keys(usernameInput)
 
-        password = browser.find_element_by_id('password')
+        password = browser.find_element("id", 'password')
         password.send_keys(passwordInput)
 
         # keep a reference to the login page submit button
-        old_submit_button = browser.find_element_by_xpath(
+        old_submit_button = browser.find_element("xpath",
             ".//*[@type='submit']")
 
         password.send_keys(Keys.RETURN)
@@ -127,7 +127,7 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
                 try:
                     browser.implicitly_wait(1)
                     wait_for_xpath(".//*[@value='Accept']", timeout=1)
-                    accept_button = browser.find_element_by_xpath(
+                    accept_button = browser.find_element("xpath",
                         ".//*[@value='Accept']")
                     accept_button.click()
                 except TimeoutException as e:
@@ -205,7 +205,8 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
             logger.info("logging in")
             headers = login(username, password, lessonid=classid)
             break
-        except:
+        except Exception as e:
+            print(e)
             continue
 
     #lock.release()
