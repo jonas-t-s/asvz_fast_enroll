@@ -57,8 +57,7 @@ def main():
     print("Title", data["title"])
     A = float(input(f"Please enter the amount of hours, before the end end of enrollement {t} when we should give up"))
     # Do until we recieve a break signal
-    while (datetime.now(tz=tzlocal.get_localzone()) - asvz_register.get_enrollment_time(sys.argv[1])[
-        1]).total_seconds() < 0 + abs(A) * 60 * 60:
+    while ((asvz_register.get_enrollment_time(sys.argv[1])[1] - datetime.now(tz=tzlocal.get_localzone())).total_seconds()) > abs(A) * 60 * 60:
         if not isfree(sys.argv[1]):
             waittime = random.randint(10, 360)
             print("sleeping for " + str(waittime) + " seconds")
