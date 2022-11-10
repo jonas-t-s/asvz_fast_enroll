@@ -70,8 +70,8 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
             lesson_url = "https://schalter.asvz.ch/tn/lessons/" + str(lessonid)
 
         browser.get(lesson_url)
-        if not existing_browser is None:
-            browser.refresh() # It could be possible, that the cache and the authentification is not up to date here. So we reload. (This may only happen, if the browser is created before.)
+
+        browser.refresh() # It could be possible, that the cache and the authentification is not up to date here. So we reload. (This may only happen, if the browser is created before.)
 
         if 'Authorization' in browser.requests[-1].headers:
             # logged in
@@ -84,6 +84,12 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
         AAI_button = wait_for_xpath(
             "//button[@value=\"SwitchAai\"]")
         AAI_button.click()
+
+        isthisthere = browser.find_elements("xpath", "//button[@value=\"SwitchAai\"]")
+
+        while len(isthisthere) > 0: # should never happen
+            browser.find_element("xpath", "//button[@value=\"SwitchAai\"]").click()
+            isthisthere = browser.find_elements("xpath", "//button[@value=\"SwitchAai\"]")
 
         session_memory = browser.find_element("xpath",
             ".//*[@id='rememberForSession']")
@@ -147,8 +153,8 @@ error_msgs = {
 }
 
 
-def enroll(headers, lesson_id, when):
-    if when.timestamp() < datetime.now().timestamp():
+def enroll(headers, lesson_id, when=None):
+    if when is None or when.timestamp() < datetime.now().timestamp():
         t = datetime.now()
     else:
         t = when
