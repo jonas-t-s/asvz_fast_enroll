@@ -159,7 +159,7 @@ def enroll(headers, lesson_id, when=None):
     else:
         t = when
     res = requests.post(
-        f'https://schalter.asvz.ch/tn-api/api/Lessons/{lesson_id}/Enrollment??t={t.timestamp()*1000}', headers=headers)
+        f'https://schalter.asvz.ch/tn-api/api/Lessons/{lesson_id}/Enrollment', headers=headers)
 
     if res.status_code == 201:
         return None, json.loads(res.content.decode())['data']['placeNumber']
@@ -219,7 +219,7 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     logger.debug("releasing lock")
     err1, val1 = enroll(headers, classid,fr) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-2)
+    time_to_sleep = max(0, (fr-now()).total_seconds()-1)
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
     sleep(time_to_sleep)
     sleeptime_in_loop = 1
@@ -242,7 +242,7 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
         logger.info(f"tried enrolling but not open yet")
         sleep(sleeptime_in_loop)
         if i >= 2:
-            sleeptime_in_loop = sleeptime_in_loop/1.5
+            sleeptime_in_loop = sleeptime_in_loop/2
     raise Exception("This should never happen")
 
 def setuplogger(classid):
