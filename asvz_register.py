@@ -35,10 +35,11 @@ def load_credentials():
         print("your credentials.json is malformed make sure to have all keys and values doubly quoted")
 
 
-def initialize_browser(headless=True):
+def initialize_browser(headless=False):
     try:
         options = FirefoxOptions()
         options.headless = headless
+        options.profile = "./selenium.profile"
         browser = webdriver.Firefox(options=options)
     except Exception:
         options = ChromeOptions()
@@ -73,7 +74,7 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
 
         browser.refresh() # It could be possible, that the cache and the authentification is not up to date here. So we reload. (This may only happen, if the browser is created before.)
 
-        if 'Authorization' in browser.requests[-1].headers:
+        if 'Authorization' in browser.requests[-1].headers and False:
             # logged in
             return browser.requests[-1].headers
         redirect_button = wait_for_xpath(
@@ -125,10 +126,12 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
         )
 
         for i in range(15):
-            if 'Authorization' in browser.requests[-1].headers:
-                # logged in
-                break
-            else:
+            for i in range(min(len(browser.requests), 20)):
+                if 'Authorization' in browser.requests[-i].headers and len(browser.requests[-i].headers["Authorization"]) > 2*len("Bearer"):
+                    return browser.requests[-i].headers
+                    # logged in
+                    break
+
                 # if we need to accept information sent to asvz
                 try:
                     browser.implicitly_wait(1)
@@ -142,7 +145,7 @@ def login(usernameInput, passwordInput, existing_browser=None, lessonid=None):
     finally:
         if existing_browser is None:
             browser.close()
-    return browser.requests[-1].headers
+    return headers
 
 
 error_msgs = {
