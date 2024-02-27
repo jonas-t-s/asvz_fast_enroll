@@ -39,12 +39,12 @@ def load_credentials():
 def initialize_browser(headless=False):
     try:
         options = FirefoxOptions()
-        options.headless = headless
-        options.profile = "./selenium.profile"
+        if headless:
+            options.add_argument("--headless")
         browser = webdriver.Firefox(options=options)
     except Exception:
         options = ChromeOptions()
-        options.headless = headless
+        options.add_argument("-headless")
         browser = webdriver.Chrome(options=options)
     return browser
 
