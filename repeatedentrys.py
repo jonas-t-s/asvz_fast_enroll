@@ -42,14 +42,15 @@ def lectionstart(classid):
     oldclassid = classid
     asvz_register.setuplogger(classid)
     oldclasstime = asvz_register.get_enrollment_time(oldclassid)
-    print(oldclasstime[0].time(), asvz_register.get_enrollment_time(classid)[0].time())
+    logger.info(str(oldclasstime[0].time())+ str(asvz_register.get_enrollment_time(classid)[0].time()))
     # If something changes, we abbort the thread.
     # browser = asvz_register.initialize_browser(headless=True)
     oldjson = asvz_register.get_data_about_lesson(classid)
-    global next
+    # global next
     next = asvz_register.get_enrollment_time(classid)[0]
     old = asvz_register.get_enrollment_time(classid)[0]
     while oldclasstime[0].time() == next.time() and oldclasstime[0].weekday() == next.weekday() and (abs((next-old).days) == 7 or (next == old)):
+        logger.info(classid)
         while True:
             try:
                 asvz_register.register(classid)
@@ -67,8 +68,9 @@ def lectionstart(classid):
             f.writelines(data)
         old = next
         next =asvz_register.get_enrollment_time(classid)[0]
-    logger.warning("The Enrollmenttime changed, so we assume something changed. Please check and restart the bot.")
-
+    logger.error("The Enrollmenttime changed, so we assume something changed. Please check and restart the bot.")
+    logger.error(str(old))
+    logger.error(str(next))
 def browserrestart():
     while True:
         global browser
@@ -102,7 +104,9 @@ def main():
    
     with open(file, mode='r') as f:
         for line in f:
-            startthread(int(line))
+            if not "#" in line:
+                startthread(int(line))
+                sleep(10)
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
         if arg.isdigit():
@@ -131,6 +135,9 @@ def startthread(lessonid):
     
     sportname = j["sportName"]
     when = datetime.strptime(j["starts"], "%Y-%m-%dT%H:%M:%S%z")
+    if when < datetime.now(tz=tzlocal.get_localzone()): # Lesson is in the past
+        startthread(str(int(lessonid) + 1))
+        return
     day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     name = sportname + "-" + day[when.weekday()] + "(orig:" + lessonid + ")"
     threads.append(threading.Thread(name=name, target=lectionstart, args=(lessonid,)))
