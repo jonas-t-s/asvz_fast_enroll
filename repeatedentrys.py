@@ -1,4 +1,5 @@
 import datetime
+import os.path
 import sys
 from threading import Lock
 
@@ -101,12 +102,12 @@ def main():
     # threads.append(threading.Thread(name="Browserrestart", target=browserrestart))
     #For every lesson we want to attend we create a seperate thread (note that those sleep almost always
 
-   
-    with open(file, mode='r') as f:
-        for line in f:
-            if not "#" in line:
-                startthread(int(line))
-                sleep(10)
+    if os.path.isfile(file): # If that file exists.
+        with open(file, mode='r') as f:
+            for line in f:
+                if not "#" in line:
+                    startthread(int(line))
+                    sleep(10)
     for arg in sys.argv:
         #test if the argument is a digit. (we note that this should only fail for sys.argv[0], which is the scriptname
         if arg.isdigit():
