@@ -60,12 +60,12 @@ def lectionstart(classid):
             break
         classid = int(int(classid) + 1)
         
-        with open(file, "rw") as f:
+        with open(file, "r") as f:
             data = f.readlines()
         for index, value in enumerate(data):
                 if value == str(classid -1):
                     data[index] = str(classid)
-        with open(file, "w") as f:
+        with open(file, "a") as f:
             f.writelines(data)
         old = next
         next =asvz_register.get_enrollment_time(classid)[0]
