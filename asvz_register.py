@@ -223,7 +223,7 @@ def register(classid, existingBrowser=None, lock=threading.Lock):
     logger.debug("releasing lock")
     err1, val1 = enroll(headers, classid,fr) # We test here, if it breaks or not. If it breaks, we enforce automatically a restart.
     # sleep until 3 s before registration opens
-    time_to_sleep = max(0, (fr-now()).total_seconds()-(0+random.random()))
+    time_to_sleep = max(0, (fr-now()).total_seconds()+(0+random.random()/2))
     logger.info(f"sleep for {time_to_sleep} seconds until {fr}")
     sleep(time_to_sleep)
     sleeptime_in_loop = 1
